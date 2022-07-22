@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %} | Généalogie {% endblock %}
+
+{% block style %}
+.tree {
+    --dark: #333;
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /*le noeud*/
+  .tree .node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 20px;
+    position: relative;
+  }
+  
+  /*gestion des petits tirets au dessus des noeuds/carrés*/
+  .tree .node:not(.node--root) > .node__element::before {
+    content: '';
+    height: 20px;
+    width: 1px;
+    background-color: #dcdcdc;
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -20px;
+    margin: auto;
+  }
+  
+/*noeud de gauche*/
+  .tree .node.node--left {
+    margin-right: 10px;
+  }
+  
+  /*noeud de droite*/
+  .tree .node.node--right {
+    margin-left: 10px;
+  }
+  
+   /*noeud contenu*/
+  .tree .node__element {
+    cursor: pointer;
+    border: 1px solid transparent;
+    height: 40px;
+    background-color: rgb(188, 117, 246);
+    border-radius: 16px;
+    min-width: 60px;
+    max-width: max-content;
+  
+    padding: 4px 8px;
+    font-size: 12px;
+    line-height: 32px;
+    text-align: center;
+  }
+  
+   /*gestion de la ligne en bas de chaque noeud pour relier*/
+  .tree .node__bottom-line {
+    height: 20px;
+    width: 1px;
+    background-color: #dcdcdc;
+  }
+
+   
+  .tree .node__element,
+  .tree .node__element::before,
+  .tree .node__children,
+  .tree .node__bottom-line {
+    transition: all ease 0.2s;
+  }
+  
+   /*affichage des enfants*/
+  .tree .node__children {
+    display: flex;
+    padding: 20px 0;
+    border-top: 1px solid #dcdcdc;
+  }
+  
+  .tree .node__element:hover {
+    border-color: var(--dark);
+  }
+  
+  .tree .node__element:hover ~ .node__children .node__element::before {
+    width: 2px;
+    background-color: var(--dark);
+  }
+  
+  .tree .node__element:hover ~ .node__bottom-line,
+  .tree .node__element:hover ~ .node__children .node__bottom-line {
+    width: 2px;
+    background-color: var(--dark);
+  }
+  
+  .tree .node__element:hover ~ .node__children,
+  .tree .node__element:hover ~ .node__children .node__children {
+    border-top-width: 2px;
+    border-color: var(--dark);
+  }
+{% endblock %}
+
+{% block head %}
+<script src="https://balkan.app/js/familytree.js"></script> 
+
+{% endblock %}
+
+{% block content %}
+{{tree.view()}}
+
+{% endblock %}
+
+<section id="showcase">
+     
+  <div class="container">
+    <h6> Ajouter des membres  </h6><hr>
+      
+
+      <div class="row" style="height:200px;">
+        <button>
+            Famille de : {{person.user.last_name}} {{person.user.first_name}}
+        </button>
+        <button>
+         mother:{{person.mother.last_name}} {{person.mother.first_name}}
+         father:{{person.father.last_name}} {{person.father.first_name}}
+         <button>
+        {% for bro in brothers %}
+         <button>
+           brother:{{bro.user.last_name}} {{bro.user.first_name}}
+         </button>
+         {% endfor %}
+            
+      </div>
+   </div>  
+
+   id chidren 3 et 4
+   
+   //manage connected person
+   { id: {{person.user.id}}, mid: 11, fid: 12, pids: [100], name: " {{person.user.last_name}} {{person.user.first_name}} ", gender: "female" },
+   { id: 100, mid: 31, fid: 32, pids: {{person.user.id}}, name: "{{person.user.last_name}} {{person.user.first_name}}", gender: "male" },
+   
+
+   //manage children
+   {% for child in children %}
+   { id: {{child.user.id}}, mid: {{child.mother.id}}, fid: {{child.father.id}}, name: "{{child.user.last_name}} {{child.user.first_name}}", gender: "male" },
+   
+
+   //code à adapter
+   { id: 21, pids: [22], name: "grandmother", gender: "female" },
+   { id: 22, pids: [21], name: "grandfather", gender: "male" },
+
+   { id: 31, pids: [32], name: "{{person.mother.last_name}} {{person.mother.first_name}}", gender: "female" },
+   { id: 32, pids: [31], name: "{{person.father.last_name}} {{person.father.first_name}}", gender: "male" },
+  
+   { id: 11, mid: 21, fid: 22, pids: [12], name: "mother", gender: "female" },
+   { id: 12, pids: [11], name: "father", gender: "male" },
+   { id: 13, mid: 21, fid: 22, tags: ["node-with-subtrees"] }, //my oncle and aunt are in the same subtrees like ùy father
+
+   { id: 14, stpid: 13, name: "uncle", gender: "male" }, 
+   { id: 15, stpid: 13, name: "aunt", gender: "female" },
+ 
+   { id: 1, mid: 11, fid: 12, pids: [2], name: " {{person.user.last_name}} {{person.user.first_name}} ", gender: "female" },
+   { id: 2, mid: 31, fid: 32, pids: [1], name: "{{person.user.last_name}} {{person.user.first_name}}", gender: "male" },
+   
+
+   //manage 
+   {% for child in children %}
+   { id: {{child.user.id}}, mid: 1, fid: 2, name: "{{child.user.last_name}} {{child.user.first_name}}", gender: "male" },
+   
+   {% endfor%}

@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} | Mises à jour {% endblock %}
+
+
+{% block content %}
+
+  <section id="register" class="bg-light py-5" style="background-color:#ecf0f3 !important">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 mx-auto">
+          <div class="card">
+            <div class="card-header bg-primary text-white" style="background-color:#D7BDE2 !important" >
+              <h4>
+                <i class="fa fa-user-plus"></i> <strong> Mise à jour des informations </strong></h4>
+            </div>
+
+            <div class="card-body">
+                <!--Alerts-->
+               
+                <form action={% url 'update_profile' %} method="POST" enctype="multipart/form-data">
+                  {% csrf_token %}
+                
+        
+                <div class="form-group">
+                  <label for="birth_date">Birth date</label>
+                  <input type="date" name="birth_date" class="form-control" value={{user.person.birth_date}}> initial : {{user.person.birth_date}}
+                </div>
+                        
+                <div class="form-group">
+                  <label for="phone_number">Phone number</label>
+                  <input type="tel" name="phone_number" class="form-control" value={{user.person.phone_number}}>
+                </div>
+   
+                <div class="form-group">
+                  <label for="occupation">Occupation</label>
+                  <input type="text" name="occupation" class="form-control" value={{user.person.occupation}}>
+                </div>
+                <div class="form-group">
+                  <label for="birth_country">Birth country</label>
+                  <input type="text" name="birth_country" class="form-control" value={{user.person.birth_country}}>
+                </div>
+
+                <div class="form-group">
+                  <label class="sr-only">Gender</label>
+                  <select name="gender" class="form-control">
+                    <option selected="true" disabled="disabled">gender</option>
+                    {% for key, value in gender_choices.items %}
+                    <option value="{{key}}"
+                      {% if key == values.gender %}
+                      selected
+                      {% endif %}>
+                      {{value}}
+                    </option>
+                      {% endfor %}
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="birth_region">Birth region</label>
+                  <input type="text" name="birth_region" value={{user.person.birth_region}}>
+                </div>
+                <div class="form-group">
+                  <label for="profile_image">Profile Image</label>
+                  <input type="file" name="profile_image" {%if user.person.profile_image %} value={{user.person.profile_image.url}} {% endif %}>
+                </div>
+                <input type="submit" value="Register" class="btn btn-secondary btn-block" style="background-color:#D7BDE2 !important">
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {% endblock %}

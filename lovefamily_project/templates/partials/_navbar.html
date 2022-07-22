@@ -1,0 +1,99 @@
+{% load static %}
+
+
+ <!-- Navbar -->
+ <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top" style="background-color:#AF7AC5 !important">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'index' %}">
+        <img src="{% static 'img/logo.png' %}" class="logo" alt="">
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      
+        {% if user.is_authenticated %}   
+        <ul class="navbar-nav">
+          {% if '/' == request.path %}
+          <li class="nav-item active mr-3">
+            {% else %}
+             <li class="nav-item mr-3">
+              {% endif %}
+            <a class="nav-link" href="{% url 'index' %}">Accueil</a>
+          </li>
+          
+          {% if '/about' == request.path %}
+          <li class="nav-item active mr-3">
+            {% else %}
+               <li class="nav-item mr-3">
+                {% endif %}
+            <a class="nav-link" href="{% url 'about' %}">Apropos</a>
+            </li>
+
+          {% if '/discussion' == request.path %}
+          <li class="nav-item active mr-3">
+            {% else %}
+          <li class="nav-item mr-3">
+            {% endif %}
+            <a class="nav-link" href="{% url 'discute' %}">Discussion</a>
+          </li>
+
+          {% if '/genealogy' == request.path %}
+          <li class="nav-item active mr-3">
+            {% else %}
+          <li class="nav-item mr-3">
+            {% endif %}
+            <a class="nav-link" href="{% url 'gene' %}">Généalogie</a>
+          </li>
+
+          <!--Dashboard-->
+        {% if 'dashboard' == request.path %}
+        <li class="nav-item active mr-3">
+          {% else %}
+        <li class="nav-item mr-3">
+          {% endif %}
+          <a class="nav-link" href="{% url 'dashboard' %}">
+           <i> Welcome {{user.username}}  (Dashboard) </i></a>
+        </li> 
+
+        <!--logout-->
+        {% if 'logout' == request.path %}
+        <li class="nav-item active mr-3">
+          {% else %}
+        <li class="nav-item mr-3">
+          {% endif %}
+          <a class="nav-link" href="{% url 'logout' %}">
+            LOGOUT</a>
+        </li> 
+      
+
+      {% else %}
+        <ul class="navbar-nav ml-auto">
+             <!--register-->
+              <li
+              {% if 'register' == request.path %}
+              li class="nav-item active mr-3"
+                {% else %}
+                  class="nav-item  mr-3"
+              {% endif %}>
+                <a class="nav-link" href="{% url 'register' %}">
+                  <i class="fa fa-user-plus"></i> Créer un compte</a>
+              </li>
+
+               <!--login-->
+              <li
+               {% if 'login' == request.path %}
+              class="nav-item active mr-3"
+                {% else %}
+              class="nav-item mr-3"
+                {% endif %}>
+                <a class="nav-link" href="{% url 'login' %}">
+                  <i class="fa fa-sign-in"></i>Connexion</a>
+              </li>
+             </ul>
+      {% endif %}
+
+
+      </div>
+    </div>
+  </nav>

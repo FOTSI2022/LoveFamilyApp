@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} | Dashboard {% endblock %}
+
+{% block content %}
+ 
+<section id="dashboard" class="py-4">
+  <div class="container">
+    <h1 style="text-align:center;">
+      Bienvenue dans votre section profil
+   </h1><hr>
+
+   <div class="row" style="height:200px;">
+    <button class="col-md-6 bg-success" >
+        <a class="nav-link" href="{% url 'profile' %}"><h1>Visualiser profil</h></a>
+    </button>
+    
+    <button class="col-md-6 bg-light" >
+          <a class="nav-link" href="{% url 'update_profile' %}"> <h1>Mettre à jour les informations</h1></a>
+    </button>
+   </div>
+  </div>
+</section>
+
+{% endblock %}
+
+  
+
+

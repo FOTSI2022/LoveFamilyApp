@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %} | Welcome {% endblock %}
+
+{% block content %}
+  <!-- Showcase -->
+  <section id="showcase">
+      <div class="container text-center" style="background-color:#AF7AC5 !important">
+      <div class="home-search p-5" style="background-color:#D7BDE2 !important" >
+        <div class="overlay p-5" style="background-color:#D5DBDB text-dark !important">
+          <h2 class="display-6 mb-4">
+            Bienvenue sur Love Family App, Vous êtes en famille!!!
+          </h2>
+          <p class="lead">Renforcez vos liens est notre mission ultime</p>
+          
+          {% if user.is_authenticated %}
+            <div class="row" style="height:200px;">
+            <button class="col-md-6 bg-success" >
+                <a class="nav-link" href="{% url 'discute' %}"><h1>Discussion</h></a>
+             </button>
+             
+             <button class="col-md-6 bg-light" >
+                  <a class="nav-link" href="{% url 'gene' %}"> <h1>Généalogie</h1></a>
+             </button>
+            </div>
+            {% else %}
+            <div class="row" style="height:200px;">
+              <button class="col-md-12 bg-success" >
+                  <a class="nav-link" href="#"><h1>Créez un compte et connectez-vous pour bénéficier de nos services!!!</h></a>
+               </button>
+            </div>
+
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  
+{% endblock content %}

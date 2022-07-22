@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %} | Généalogie {% endblock %}
+
+{% block style %}
+/*CSS*/
+html, body{
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin:0;
+  overflow: hidden;
+  font-family: Helvetica;
+}
+#tree{
+  width:100%;
+  height:100%;
+}
+
+
+{% endblock %}
+
+{% block head %}
+<script src="https://balkan.app/js/familytree.js"></script> 
+
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<section id="bc" class="mt-3">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="{% url 'index' %}">
+            <i class="fas fa-home"></i> Accueil</a>
+        </li>
+        <li class="breadcrumb-item active"> Membres de la famille</li>
+      </ol>
+    </nav>
+  </div>
+</section>
+
+<section>
+  <div id="tree"/>
+
+
+</section>
+
+<script>
+
+//JavaScript
+
+FamilyTree.templates.group = Object.assign({}, FamilyTree.templates.tommy);
+FamilyTree.templates.group.size = [250, 120];
+FamilyTree.templates.group.node = 
+    '<rect rx="20" ry="20" x="0" y="0" height="{h}" width="{w}" fill="#ffd333" stroke-width="3" stroke="#aeaeae"></rect>';
+FamilyTree.templates.group.nodeMenuButton = "";
+FamilyTree.templates.group.field_0 = 
+    '<text data-width="220" style="font-size: 18px;" fill="black" x="{cw}" y="30" text-anchor="middle">'
+    + '{val}</text>';
+FamilyTree.templates.group.field_1 = '';
+
+FamilyTree.templates.group.ripple = {
+    radius: 50,
+    color: "#aeaeae"
+};
+
+FamilyTree.templates.group.min = Object.assign({}, FamilyTree.templates.group);
+FamilyTree.templates.group.min.img_0 = "";
+FamilyTree.templates.group.min.field_0 = '{val}',
+FamilyTree.templates.group.min.field_1 = "";
+
+var family = new FamilyTree(document.getElementById("tree"), {
+    mode: 'dark',
+    mouseScrool: FamilyTree.none,
+    nodeBinding: {
+        field_0: "name"
+    },
+    tags: {
+        "node-with-subtrees": {
+            min: true,
+            template: "group",
+            subTreeConfig: {
+                siblingSeparation: 3,
+                columns: 2
+            }
+        }
+    }
+});
+
+family.on('field', function (sender, args) {
+    if (args.node.min) {
+        if (args.name == "name") {
+            var count = args.node.stChildrenIds.length > 5 ? 5 : args.node.stChildrenIds.length;
+            var x = args.node.w / 2 - (count * 64) / 2;
+            args.value = "";
+            for (var i = 0; i < count; i++) {
+                var data = sender.get(args.node.stChildrenIds[i]);
+                if (data.name == "uncle")
+                    args.value += 
+                        '<rect x="' + (x + i * 64) + '" y="55" width="64" height="32" fill="rgb(3, 155, 229)" rx="5" ry="5"></rect>'
+                        + '<text x="' + (x + i * 64 + 20)  + '" y="75" fill="#fff">uncle</text>';
+                else 
+                    args.value += 
+                        '<rect x="' + (x + i * 64) + '" y="55" width="64" height="32" fill="rgb(245, 124, 0)" rx="5" ry="5"></rect>'
+                        + '<text x="' + (x + i * 64 + 20) + '" y="75" fill="#fff">aunt</text>';
+             
+            }
+        }
+    }
+});
+
+family.on('click', function (sender, args) {
+    if (args.node.templateName == "group") {
+        if (args.node.min ) {
+            sender.maximize(args.node.id);
+        }
+        else {
+            sender.minimize(args.node.id);
+        }
+        return false;
+    } 
+});
+
+family.load([
+    //how to manage grand-parents partners of person connect
+    { id: 21, pids: [22], name: "grandmother", gender: "female" },
+    { id: 22, pids: [21], name: "grandfather", gender: "male" },
+    
+    //manage husband parents who is the connect person
+    { id: 31, pids: [32], name: "{{partner.mother.last_name}} {{partner.mother.first_name}}", gender: "female" },
+    { id: 32, pids: [31], name: "", gender: "male" },
+   
+    //how to manage parents partners of person connect
+    { id: 11, mid: 21, fid: 22, pids: [12], name: "{{person.mother.last_name}} {{person.mother.first_name}}", gender: "female" },
+    { id: 12, pids: [11], name: "{{person.father.last_name}} {{person.father.first_name}}", gender: "male" },
+    { id: 13, mid: 21, fid: 22, tags: ["node-with-subtrees"] }, //my oncle and aunt are in the same subtrees like ùy father
+
+    { id: 14, stpid: 13, name: "uncle", gender: "male" }, 
+    { id: 15, stpid: 13, name: "aunt", gender: "female" },
+   
+    //personne connectée et son partenaire
+    { id: 1, mid: 31, fid: 32, pids: [2], name: " {{partner.last_name}} {{partner.first_name}} ", gender: "female" },
+    { id: 2, mid: 11, fid: 12, pids: [1], name: "{{person.user.last_name}} {{person.user.first_name}}", gender: "male" },
+    
+
+    //manage chidren
+    {% for child in children %}
+    { id: {{child.user.id}}, mid: 1, fid: 2, name: "{{child.user.last_name}} {{child.user.first_name}}", gender: "male" },
+    
+    {% endfor%}
+]);
+
+</script>
+{% endblock %}

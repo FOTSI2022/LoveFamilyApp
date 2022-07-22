@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} | Register Account {% endblock %}
+
+
+{% block content %}
+
+  <section id="register" class="bg-light py-5" style="background-color:#ecf0f3 !important">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 mx-auto">
+          <div class="card">
+            <div class="card-header bg-primary text-white" style="background-color:#D7BDE2 !important" >
+              <h4>
+                <i class="fas fa-user-plus"></i> <strong> Register </strong></h4>
+            </div>
+
+            <div class="card-body">
+                <!--Alerts-->
+               
+                <form action={% url 'register' %} method="POST" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <div class="form-group">
+                  <label for="first_name">First Name</label>
+                  <input type="text" name="first_name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="last_name">Last Name</label>
+                  <input type="text" name="last_name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="username">Username</label>
+                  <input type="text" name="username" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                  <label for="father">father LastName and FirstName</label>
+                  <input type="text" name="father" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                  <label for="mother">mother LastName and FirstName</label>
+                  <input type="text" name="mother" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                  <label class="sr-only">Gender</label>
+                  <select name="gender" class="form-control">
+                    <option selected="true" disabled="disabled">gender</option>
+                    {% for key, value in gender_choices.items %}
+                    <option value="{{key}}"
+                      {% if key == values.gender %}
+                      selected
+                      {% endif %}>
+                      {{value}}
+                    </option>
+                      {% endfor %}
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input type="email" name="email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="password2">Password</label>
+                  <input type="password" name="password" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="password">Confirm Password</label>
+                  <input type="password" name="password2" class="form-control" required>
+                </div>
+                <input type="submit" value="Register" class="btn btn-secondary btn-block" style="background-color:#D7BDE2 !important">
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {% endblock %}
