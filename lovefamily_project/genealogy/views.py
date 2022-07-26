@@ -11,17 +11,23 @@ def gene(request):
 
 
 def nodes(request):
-     # recupere les données de la BDB à afficher dans un premier temps.
+    
+    family = []
+    # recupere les données de la BDB à afficher dans un premier temps.
     #this_person=Person.objects.filter(user_id=request.user.id).first()
     this_person=Person.objects.filter(user=request.user).first() # ou bien user_id=request.user.id
-    
+    family.append(this_person)
+
     #frere meme mère et père de la personne connectée
     brothers=''
     try:
         brothers=Person.objects.filter(mother=this_person.mother, father=this_person.father)
     except:
         print("Informations sur les frères non disponibles")
-        
+
+    if brothers:
+         family.append(brothers)  
+
     #frere meme mère de la personne connectée
     brothers_mother=''
     try:
@@ -45,17 +51,21 @@ def nodes(request):
     grandfather='' #grand-père de la personne connectée côté paternel
     try:
         father= this_person.father
+        
     except:
         print("informations sur le père de la personne connectée non fournies")
     
     if father:
+        family.append(father)
         try:
             grandfather= father.father
+            family.append(grandfather)
         except:
             print("Informations sur le grand père du père de la personne connectée non fournies")
         
         try:
             grandmother= father.mother
+            family.append(grandmother)
         except:
             print("Informations sur la grande mère du père de la personne connectée  non fournies")
 
@@ -70,13 +80,16 @@ def nodes(request):
         print("Informations sur la grand père de la mère de la personne connectée non fournie")
     
     if mother:
+        family.append(mother)
         try:
             grandfather_mother= mother.father
+            family.append(grandfather_mother)
         except:
             print("Informations sur le grand père maternel de la personne connectée non fournies")
         
         try:
             grandmother_mother= mother.mother
+            family.append(grandmother_mother)
         except:
             print("Informations sur la grande mère maternelle de la personne connectée non fournies ")
       
@@ -95,7 +108,10 @@ def nodes(request):
                 print("Informations non fournies sur les enfants de la personne connectée")
             
             if children:
+                for child in children:
+                    family.append(child)
                 partner= children[0].mother
+                family.append(partner)
         else:
             try:
                 children=Person.objects.filter(mother_id=this_person.user_id)
@@ -103,7 +119,10 @@ def nodes(request):
                 print("Informations non fournies sur les enfants de la personne connectée")
             
             if children:
+                for child in children:
+                    family.append(child)
                 partner= children[0].father
+                family.append(partner)
     except:
         ("Informations sur le sexe non fournie")
     
@@ -119,13 +138,16 @@ def nodes(request):
         print('Information sur le père du partner non fournie')
 
     if father_part:
+        family.append(father_part)
         try:
             grandfather_part= father_part.father 
+            family.append(grandfather_part)
         except:
             print("Information sur la mêre du père du partner non fournie")
         
         try:
             grandmother_part= father_part.mother 
+            family.append(grandmother_part)
         except:
             print("Information sur la mêre du père partner non fournie")
 
@@ -142,26 +164,30 @@ def nodes(request):
         print('Information sur la mère du partner non fournie')
 
     if mother_part:
+        family.append(mother_part)
         try:
             grandfather_part_mother= mother_part.father 
+            family.append(grandfather_part_mother)
         except:
             print("Information sur la mêre de la mêre du partner non fournie")
         
         try:
-            grandmother_part_mother= father_part.mother 
+            grandmother_part_mother= father_part.mother
+            family.append(grandmother_part_mother) 
         except:
             print("Information sur la mêre du père partner non fournie")
 
     
 
     #les petits enfants de la personne connectée
-    person = Person.objects.all()
+    person_all = Person.objects.all()
     children_children=[]
     
     for child in children:
-        for pers in person:
-            if pers.father_id == child.user.id:
+        for pers in person_all:
+            if pers.father_id == child.user.id or pers.mother_id == child.user.id:
                 children_children.append(pers)
+                family.append(pers)
     
     context={'person':this_person,
              'brothers':brothers,
@@ -172,6 +198,7 @@ def nodes(request):
              'partner': partner,
              'father': father,
              'mother': mother,
+             'family': family,
              'grandmother': grandmother,
              'grandfather': grandfather,
              'grandmother_part': grandmother_part,

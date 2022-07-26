@@ -72,7 +72,7 @@ p {
     {% if user.is_authenticated %}
     
     <div class="avatar-flip">
-      {% if user.person.profile_image.url %} 
+      {% if user.person.profile_image %} 
         <img src="{{user.person.profile_image.url}}" alt="{{ user.person.first_name }} image" style="height:250px  width:100px">
         <img src="http://i1112.photobucket.com/albums/k497/animalsbeingdicks/abd-3-12-2015.gif~original" height="150" width="150">
       {% else %} <i class="fa fa-user"></i>

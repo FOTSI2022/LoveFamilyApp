@@ -22,42 +22,85 @@ def discute(request):
     
     if request.method == 'POST':
         text_comment=request.POST['comment_text']
-        Messages.objects.create(content_message=text_comment, user=request.user.person)
+        try:
+            Messages.objects.create(content_message=text_comment, user=request.user.person)
+        except:
+            print("Messages non créés")
         
     family = []
     commentaires =[]
 
-    #personne connectée 
+    #personne connectée
     this_person=Person.objects.filter(user=request.user).first() # ou bien user_id=request.user.id
     family.append(this_person)
 
     #pere de la personne connectée 
-    father=Person.objects.filter(user=this_person.father).first() # ou bien user_id=request.user.id
-    family.append(father)
+    father=""
+    try:
+        father=Person.objects.filter(user=this_person.father).first() # ou bien user_id=request.user.id
+    except:
+        print("Information sur le pere non renseignees")
+    
+    if father:
+        family.append(father)
 
-    #mere de la personne connectée 
-    mother=Person.objects.filter(user=this_person.mother).first() # ou bien user_id=request.user.id
-    family.append(mother)
+    #mere de la personne connectée
+    mother="" 
+    try:
+        mother=Person.objects.filter(user=this_person.mother).first() # ou bien user_id=request.user.id
+    except:
+        print("Information sur la mere non renseignees")
+    
+    if mother:
+        family.append(mother)
     
     #frere meme mère et père de la personne connectée
-    brothers= Person.objects.filter(mother=this_person.mother, father=this_person.father).exclude(user=request.user)
+    brothers=""
+    try:
+        brothers= Person.objects.filter(mother=this_person.mother, father=this_person.father).exclude(user=request.user)
+    except:
+        print("Information sur les freres non renseignees")
     
-    #enfants de la personne connectée
-    children=Person.objects.filter(father_id=this_person.user_id) 
-    
-    for child in children:
-        family.append(child) #affiche tous les messages des enfants
-    print(family)
-    print("-------------------")
+    if brothers:
+        family.append(brothers)
+        
     for bro in brothers:
         family.append(bro) #enregistre tous les messages des frères
-    print(family)
-    print("-------------------")
-    #partner de la personne connectée
-    partner= children[0].mother
-    family.append(partner)
-    print(family)
-    print("-------------------")
+
+    #enfants de la personne connectée
+    children=[]
+    partner=""
+    try:
+        this_person.gender=="male"
+        
+        if this_person.gender=="male":
+            try:
+                children=Person.objects.filter(father_id=this_person.user_id)
+            except:
+                print("Informations non fournies sur les enfants de la personne connectée")
+            
+            if children:
+                partner= children[0].mother
+                for child in children:
+                    family.append(child) #affiche tous les messages des enfants
+                family.append(partner)
+        else:
+            try:
+                children=Person.objects.filter(mother_id=this_person.user_id)
+            except:
+                print("Informations non fournies sur les enfants de la personne connectée")
+            
+            if children:
+                partner= children[0].father
+                for child in children:
+                    family.append(child) #affiche tous les messages des enfants
+                family.append(partner)
+    
+           
+    except:
+        print("Informations sur le sexe non fournie")
+  
+
     for msg in Messages.objects.order_by('date_message'):
         if msg in commentaires:
                 continue
@@ -66,5 +109,5 @@ def discute(request):
             
                 if msg.user == member:
                     commentaires.append(msg)    
-    print(commentaires)
+
     return  render(request, 'discussion/discute.html', {'commentaires':commentaires})

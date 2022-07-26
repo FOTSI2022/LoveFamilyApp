@@ -90,7 +90,7 @@
 
                 <div class="form-group">
                   <label for="profile_image">Profile Image</label>
-                  <input type="file" name="profile_image" {%if user.person.profile_image.url %} value={{user.person.profile_image.url}} {% endif %}>
+                  <input type="file" name="profile_image" {%if user.person.profile_image %} value={{user.person.profile_image.url}} {% endif %}>
                 </div>
                 <input type="submit" value="Update" class="btn btn-secondary btn-block" style="background-color:#C0392B !important">
               </form>
