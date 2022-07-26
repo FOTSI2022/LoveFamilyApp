@@ -17,13 +17,10 @@ html, body{
   width:100%;
   height:100%;
 }
-
-
 {% endblock %}
 
 {% block head %}
 <script src="https://balkan.app/js/familytree.js"></script> 
-
 {% endblock %}
 
 {% block content %}
@@ -125,32 +122,59 @@ family.on('click', function (sender, args) {
 });
 
 family.load([
-    //how to manage grand-parents partners of person connect
-    { id: 21, pids: [22], name: "grandmother", gender: "female" },
-    { id: 22, pids: [21], name: "grandfather", gender: "male" },
+     //manage grands parents du partenaire de la personne connectée
+     //{ id: 22, pids: [21], name: "{{grandfather.last_name}} {{grandfather.first_name}}", gender: "{{grandfather.gender}}" },
+     //{ id: 21, pids: [22], name: "{{grandmother.last_name}} {{grandmother.first_name}}", gender: "{{grandmother.gender}}" },
     
-    //manage husband parents who is the connect person
-    { id: 31, pids: [32], name: "{{partner.mother.last_name}} {{partner.mother.first_name}}", gender: "female" },
-    { id: 32, pids: [31], name: "", gender: "male" },
-   
-    //how to manage parents partners of person connect
-    { id: 11, mid: 21, fid: 22, pids: [12], name: "{{person.mother.last_name}} {{person.mother.first_name}}", gender: "female" },
-    { id: 12, pids: [11], name: "{{person.father.last_name}} {{person.father.first_name}}", gender: "male" },
-    { id: 13, mid: 21, fid: 22, tags: ["node-with-subtrees"] }, //my oncle and aunt are in the same subtrees like ùy father
+    //manage grands parents personne connectée
+ 
+    //{ id: 22, pids: [21], name: "{{grandfather.last_name}} {{grandfather.first_name}}", gender: "{{grandfather.gender}}" },
+    //{ id: 21, pids: [22], name: "{{grandmother.last_name}} {{grandmother.first_name}}", gender: "{{grandmother.gender}}" },
+        
+    //manage parents of partner de la personne connectée
+    //{ id: {{partner.person.mother.id}}, pids: [{{partner.person.father.id}}], name: "{{partner.person.mother.last_name}} {{partner.person.mother.first_name}}", gender: "{{partner.person.mother.gender}}" },
+    //{ id: {{partner.person.father.id}}, pids: [{{partner.person.mother.id}}], name: "{{partner.person.father.last_name}} {{partner.person.father.first_name}}", gender: "{{partner.person.father.gender}}" },
+  
 
-    { id: 14, stpid: 13, name: "uncle", gender: "male" }, 
-    { id: 15, stpid: 13, name: "aunt", gender: "female" },
-   
+    //manage parents personne connectée
+    {% if father.person.mother.user.id and father.person.father.user.id %}
+       { id: {{father.id}}, mid: {{father.person.mother.user.id}}, fid: {{father.person.father.user.id}}, pids: [{{mother.id}}], name: "{{father.last_name}} {{father.first_name}}", gender: "male"},
+    {% else %}
+       { id: {{father.id}}, pids: [{{mother.id}}], name: "{{father.last_name}} {{father.first_name}}", gender: "male"},
+    {% endif %}
+    
+    {% if mother.person.mother.user.id and mother.person.father.user.id %}
+       { id: {{mother.id}}, mid: {{mother.person.mother.user.id}}, fid: {{mother.person.father.user.id}}, pids: [{{father.id}}], name: "{{mother.last_name}} {{mother.first_name}}", gender: "female" },
+    {% else %}
+       { id: {{mother.id}}, pids: [{{father.id}}], name: "{{mother.last_name}} {{mother.first_name}}", gender: "female" },
+    {% endif %}
+    
     //personne connectée et son partenaire
-    { id: 1, mid: 31, fid: 32, pids: [2], name: " {{partner.last_name}} {{partner.first_name}} ", gender: "female" },
-    { id: 2, mid: 11, fid: 12, pids: [1], name: "{{person.user.last_name}} {{person.user.first_name}}", gender: "male" },
+    
+       {% if mother.id and father.id %}
+         { id: {{person.user.id}}, mid: {{mother.id}}, fid: {{father.id}}, pids: [{{partner.id}}], name: "{{person.user.last_name}} {{person.user.first_name}}", gender: "{{person.gender}}" },
+       {% else %}
+         { id: {{person.user.id}}, pids: [{{partner.id}}], name: "{{person.user.last_name}} {{person.user.first_name}}", gender: "{{person.gender}}" },
+        {% endif %}
+
+        {% if partner.person.mother.id and partner.person.father.id %}
+          { id: {{partner.id}}, mid: {{partner.person.mother.id}}, fid: {{partner.person.father.id}}, pids: [{{person.user.id}}], name: " {{partner.last_name}} {{partner.first_name}} ", gender: "{{partner.person.gender}}" },
+        {% else %}
+          { id: {{partner.id}}, mid: '{{partner.person.mother.id}}', fid: '{{partner.person.father.id}}', pids: [{{person.user.id}}], name: " {{partner.last_name}} {{partner.first_name}} ", gender: "{{partner.person.gender}}" },
+        {% endif %}
     
 
     //manage chidren
-    {% for child in children %}
-    { id: {{child.user.id}}, mid: 1, fid: 2, name: "{{child.user.last_name}} {{child.user.first_name}}", gender: "male" },
+    {% if person.gender == 'male' %}
+      {% for child in children %}
+        { id: {{child.user.id}}, mid: {{partner.id}}, fid: {{person.user.id}}, name: "{{child.user.last_name}} {{child.user.first_name}}", gender: "{{child.gender}}" },
+      {% endfor %}
+    {% else %}
+      {% for child in children %}
+        { id: {{child.user.id}}, mid: {{person.user.id}}, fid: {{partner.id}}, name: "{{child.user.last_name}} {{child.user.first_name}}", gender: "{{child.gender}}" },
+      {% endfor %}
+    {% endif %}
     
-    {% endfor%}
 ]);
 
 </script>

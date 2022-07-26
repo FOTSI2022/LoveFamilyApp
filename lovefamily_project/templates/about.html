@@ -21,7 +21,7 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <h2>Mettre en contact les membres de familles.</h2>
+          <h2 style="text-transform: uppercase">Mettre en contact les membres de familles.</h2>
           <p class="lead">L’objectif général de cette application est de regrouper et permettre à toute famille de disposer/visualiser de son arbre généalogique.</p>
           
           <img src="{% static 'img/coeur.jpg' %} ?2022/07/13" alt="" >
@@ -34,39 +34,5 @@
     </div>
   </section>
 
-  <!-- Work -->
-  <section id="work" class="bg-dark text-white text-center" style="height:20px;">
-    <h2 class="display-8">Nous sommes là pour vous</h2>
-    <h4>Vous réunir, nous tient à coeur</h4>
-    <p> Quelques statistiques</p>
-  </section>
 
-  <!-- Team -->
-  <section id="team" class="py-5">
-    <div class="container">
-      <h2 class="text-center">Notre equipe</h2>
-       <div class="row text-center">
-
-        {% if realtors %}
-           {% for realtor in realtors %}
-              <div class="col-md-4">
-                <img src="{{ realtor.photo.url }}"  alt="" class="rounded-circle mb-3">
-                <h4>{{ realtor.name }}</h4>
-                <p class="text-success">
-                  <i class="fas fa-award text-success mb-3"></i> Realtor</p>
-                <hr>
-                <p>
-                  <i class="fas fa-phone"></i> {{ realtor.phone }}</p>
-                <p>
-                  <i class="fas fa-envelope-open"></i> {{ realtor.email }}</p>
-              </div>
-              {% endfor %}
-              {% else %}
-              <div class="col-md-12">
-                <p>Pas de membre enregistré</P>
-              </div>
-              {% endif %}
-      </div>
-    </div>
-  </section>
 {% endblock content %}

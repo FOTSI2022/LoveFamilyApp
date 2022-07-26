@@ -11,7 +11,7 @@
       <div class="row">
         <div class="col-md-6 mx-auto">
           <div class="card">
-            <div class="card-header bg-primary text-white" style="background-color:#D7BDE2 !important" >
+            <div class="card-header bg-primary text-white" style="background-color:#C0392B !important" >
               <h4>
                 <i class="fa fa-user-plus"></i> <strong> Mise à jour des informations </strong></h4>
             </div>
@@ -32,7 +32,28 @@
                   <label for="phone_number">Phone number</label>
                   <input type="tel" name="phone_number" class="form-control" value={{user.person.phone_number}}>
                 </div>
-   
+                
+                <div class="form-group">
+                  <label for="father_first_name">father FirstName</label>
+                  <input type="text" name="father_first_name" class="form-control" value={{user.person.father.first_name}}>
+                </div>
+
+                <div class="form-group">
+                  <label for="father_last_name">father LastName</label>
+                  <input type="text" name="father_last_name" class="form-control" value={{user.person.father.last_name}}>
+                </div>
+                
+                <div class="form-group">
+                  <label for="mother_first_name">mother FirstName</label>
+                  <input type="text" name="mother_first_name" class="form-control" value={{user.person.mother.first_name}}>
+                </div>
+
+                <div class="form-group">
+                  <label for="mother_last_name">mother LastName</label>
+                  <input type="text" name="mother_last_name" class="form-control" value={{user.person.mother.last_name}}>
+                </div>
+              
+
                 <div class="form-group">
                   <label for="occupation">Occupation</label>
                   <input type="text" name="occupation" class="form-control" value={{user.person.occupation}}>
@@ -43,15 +64,14 @@
                 </div>
 
                 <div class="form-group">
-                  <label class="sr-only">Gender</label>
+                  <label>Gender</label>
                   <select name="gender" class="form-control">
-                    <option selected="true" disabled="disabled">gender</option>
-                    {% for key, value in gender_choices.items %}
-                    <option value="{{key}}"
-                      {% if key == values.gender %}
-                      selected
-                      {% endif %}>
-                      {{value}}
+                    <option name="gender" selected="true" disabled="disabled">{{user.person.gender}}</option>
+                    
+                    {% for key in g %}
+                    <option value="{{key}}" name="gender">
+                      
+                      {{key}}
                     </option>
                       {% endfor %}
                   </select>
@@ -61,11 +81,18 @@
                   <label for="birth_region">Birth region</label>
                   <input type="text" name="birth_region" value={{user.person.birth_region}}>
                 </div>
+
+                <div class="form-group">
+                  <label for="history">history</label>
+                  <input type="text" name="history" value={{user.person.history}}>
+                </div>
+
+
                 <div class="form-group">
                   <label for="profile_image">Profile Image</label>
-                  <input type="file" name="profile_image" {%if user.person.profile_image %} value={{user.person.profile_image.url}} {% endif %}>
+                  <input type="file" name="profile_image" {%if user.person.profile_image.url %} value={{user.person.profile_image.url}} {% endif %}>
                 </div>
-                <input type="submit" value="Register" class="btn btn-secondary btn-block" style="background-color:#D7BDE2 !important">
+                <input type="submit" value="Update" class="btn btn-secondary btn-block" style="background-color:#C0392B !important">
               </form>
             </div>
           </div>

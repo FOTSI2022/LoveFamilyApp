@@ -13,6 +13,7 @@ from accounts.choices import *
 
 # Create your views here.
 def register(request):
+    g=['male', 'female']
     if request.method=="POST":
         #get form values
         last_name=request.POST['last_name']
@@ -21,11 +22,7 @@ def register(request):
         father=request.POST['father']
         mother=request.POST['mother']
         email=request.POST['email']
-
-        if 'gender' in request.GET:
-            gender=request.GET['gender']  #from form
-        if gender:
-            queryset_list=queryset_list.filter(gender__iexact=gender)
+        gender=request.POST['gender']
 
         password=request.POST['password']
         password2=request.POST['password2']
@@ -37,12 +34,6 @@ def register(request):
                 messages.error(request, 'That username is taken')
                 return redirect('register')
             else:
-                '''if Person.objects.filter(phone_number=phone_number).exists():                                 
-                    messages.error(request, 'That number is being used')
-                    return redirect('register')
-                else:
-                    #looks good
-                    '''
                 user=User(
                         last_name=last_name,
                         first_name=first_name,
@@ -57,7 +48,7 @@ def register(request):
                 fatherList = father.split(' ')
                 fatherUser = User.objects.filter(first_name=fatherList[1], last_name=fatherList[0]).first()#first permet de recuperer l objet 
                 if fatherUser is None:
-                    fatherUser=User(first_name=fatherList[1], last_name=fatherList[0])
+                    fatherUser=User(first_name=fatherList[1], last_name=fatherList[0], username=fatherList[1]+'pere')
                     fatherUser.set_password('0000')
                     fatherUser.save()
                 
@@ -75,11 +66,6 @@ def register(request):
                         mother=motherUser,
                         gender=gender,
                         email=email)
-
-                    #login after register
-                    #auth.login(request, user)
-                    #messages.success(request,'You are now log in')
-                    #return redirect('login')
                     
                 messages.success(request,'Vous êtes enregistré')
                 return redirect('login')
@@ -87,7 +73,7 @@ def register(request):
              messages.error(request, 'Les paramètres renseignés ne sont pas corrects')
              return redirect('register')
     else:
-        return render(request, 'accounts/register.html')
+        return render(request, 'accounts/register.html', {'g':g})
 
 
 def login(request):
@@ -110,41 +96,140 @@ def login(request):
 
 
 def update_profile(request):
-        
+    g=['male', 'female']
     if request.method=="POST":
         
         #get form values
-        birth_date=request.POST['birth_date']
-        phone_number=request.POST['phone_number']
-        occupation=request.POST['occupation']
-        birth_country=request.POST['birth_country']
-        birth_region=request.POST['birth_region']
+        if request.POST['phone_number']:
+                phone_number=request.POST['phone_number']
         
-        if 'gender' in request.GET:
-            gender=request.GET['gender']  #from form
-        if gender:
-            queryset_list=queryset_list.filter(gender__iexact=gender)
+        if request.POST['occupation']:
+                occupation=request.POST['occupation']
+        
+        if request.POST['father_last_name']:
+                father_last_name=request.POST['father_last_name']
+        
+        if request.POST['father_first_name']:
+                father_first_name=request.POST['father_first_name']
+        
+        if request.POST['mother_last_name']:
+                mother_last_name=request.POST['mother_last_name']
+        
+        if request.POST['mother_first_name']:
+                mother_first_name=request.POST['mother_first_name']
+        
+        if request.POST['birth_country']:
+                birth_country=request.POST['birth_country']
+        
+        if request.POST['birth_region']:
+                birth_region=request.POST['birth_region']
+       
+        if request.POST['history']:
+                history=request.POST['history']
+        
+        if request.POST.get('gender') :
+                gender=request.POST['gender']
+        
+        if request.FILES.get('profile_image'):
+                profile_image=request.FILES['profile_image']
+        
+        if request.POST['birth_date']:
+                birth_date=request.POST['birth_date']
 
-        profile_image=request.FILES['profile_image']
-
-
+        p=''       
         #p= Person.objects.get(id= current_user.id) forbidden
-        p= Person.objects.get(user= request.user)
-        p.birth_date=birth_date
-        p.phone_number=phone_number
-        p.occupation=occupation
-        p.birth_country=birth_country
-        p.birth_region=birth_region
-        p.gender=gender,
-        p.profile_image=profile_image
-        p.personallyregister=False
-        p.save()
+        #if Person.objects.get(user= request.user):
+        try:
+            p= Person.objects.get(user= request.user)
+        except:
+            print('Personne non connectée')
+        if Person.objects.get(user= request.user):
+            p= Person.objects.get(user= request.user)
+            if request.POST['birth_date']:
+                p.birth_date=request.POST['birth_date']
+
+            if request.POST['phone_number']:
+                p.phone_number=request.POST['phone_number']
+            
+            if request.POST['occupation']:
+                p.occupation=request.POST['occupation']
+            
+            if request.POST['birth_country']:
+                p.birth_country=request.POST['birth_country']
+            
+            if request.POST['birth_region']:
+                p.birth_region=request.POST['birth_region']
+            
+            if request.POST['history']:
+                p.history=request.POST['history']
+            
+            if request.POST['father_last_name']:
+                p.father_last_name=request.POST['father_last_name']
+        
+            if request.POST['father_first_name']:
+                p.father_first_name=request.POST['father_first_name']
+        
+            if request.POST['mother_last_name']:
+                    p.mother_last_name=request.POST['mother_last_name']
+        
+            if request.POST['mother_first_name']:
+                    p.mother_first_name=request.POST['mother_first_name']
+            
+            if request.POST.get('gender') :
+                p.gender=request.POST['gender']
+           
+            if request.FILES.get('profile_image'):
+                p.profile_image=request.FILES['profile_image']
+            
+            p.personallyregister=False
+
+            try:
+                fatherUser=User.objects.filter(first_name=father_first_name, last_name=father_last_name)
+            except:
+                print("Le nom du père n'est pas enregistré")
+            
+            if fatherUser is None:
+                fatherUser=User.objects.create(first_name=father_first_name, last_name=father_last_name, username=father_last_name+'pere')
+                fatherUser.set_password('0000')
+                fatherUser.save()
+
+            try:
+                motherUser=User.objects.filter(first_name=mother_first_name, last_name=mother_last_name)
+            except:
+                print("Le nom de la mère n'est pas enregistré")
+            
+            if motherUser is None:
+                motherUser=User.objects.create(first_name=mother_first_name, last_name=mother_last_name, username=mother_last_name+'mere')
+                motherUser.set_password('0000')
+                motherUser.save()
+                     
+            p.save()
+
+            messages.success(request,'vos informations ont été mises à jour')
+            return redirect('index')
+        else:
+         
+            p= Person.objects.create(
+                        user=request.user,                                                         
+                        father=fatherUser,
+                        mother=motherUser,
+                        gender=gender,
+                        birth_date=birth_date,
+                        phone_number=phone_number,
+                        occupation=occupation,
+                        birth_country=birth_country,
+                        birth_region=birth_region,
+                        history=history,
+                        profile_image=profile_image     
+        
+                        )
+             
                 
-        messages.success(request,'vos informations ont été mises à jour')
+        messages.success(request,'vos informations sont créées')
         return redirect('index')
     else:
         messages.error(request, "Une erreur s'est produite")
-        return render(request, 'accounts/update_profile.html')
+        return render(request, 'accounts/update_profile.html',{'g':g})
 
 
 def profile(request):
@@ -152,8 +237,7 @@ def profile(request):
     this_person= Person.objects.filter(user = request.user).first()
     
     context={'person':this_person,
-             
-              }
+                           }
      
     return render(request, 'accounts/profile.html', context)
 

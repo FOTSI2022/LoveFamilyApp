@@ -46,6 +46,7 @@
 .be-comment-name {
     font-size: 16px;
     font-family: 'Conv_helveticaneuecyr-bold';
+    color: #050002;
 }
 
 .be-comment-content a {
@@ -64,13 +65,13 @@
 
 .be-comment-time {
     font-size: 17px;
-    color: #b4b7c1;
+    color: #050002;
 }
 
 .be-comment-text {
     font-size: 20px;
     line-height: 18px;
-    color: #7a8192;
+    color: #050002;
     display: block;
     background: #f6f6f7;
     border: 1px solid #edeff2;
@@ -99,7 +100,7 @@
     font-size: 20px;
     line-height: 50px;
     font-weight: 400;
-    color: #b4b7c1;
+    color: #050002;
     width: 100%;
     height: 50px;
     padding-left: 20px;
@@ -136,13 +137,12 @@
     </section>
 
   <!-- Discution -->
-  <section id="showcase">
-    <div class="container" style="background-color:#D7BDE2 !important" >
+  <section id="showcase" style="padding:0 !important">
+    <div class="container" style="background-color:#D5DBDB !important " >
     <div class="row">       
             <!---->
          <div class="col md-12 be-comment-block">
-            <h4 class="comments-title"> <strong>Nombre de commentaires:</strong> {{ commentaires.count }}</h4>
-            
+                       
             <!--Debut du bloc commentaire à automatiser-->
             <div class="be-comment">
 
@@ -183,6 +183,4 @@
             <!---->
     </div>
 </section>
-
-        
 {% endblock %}
