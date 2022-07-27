@@ -121,66 +121,105 @@ family.on('click', function (sender, args) {
     } 
 });
 
+
 family.load([
-     //manage grands parents du partenaire de la personne connectée
-     //{ id: 22, pids: [21], name: "{{grandfather.last_name}} {{grandfather.first_name}}", gender: "{{grandfather.gender}}" },
-     //{ id: 21, pids: [22], name: "{{grandmother.last_name}} {{grandmother.first_name}}", gender: "{{grandmother.gender}}" },
-    
-    //manage grands parents personne connectée
- 
-    //{ id: 22, pids: [21], name: "{{grandfather.last_name}} {{grandfather.first_name}}", gender: "{{grandfather.gender}}" },
-    //{ id: 21, pids: [22], name: "{{grandmother.last_name}} {{grandmother.first_name}}", gender: "{{grandmother.gender}}" },
-        
-    //manage parents of partner de la personne connectée
-    
-
-    //manage parents personne connectée
      
-    //premier cas la personne connectée a des parents
+    //manage grands parents personne connectée
+    {% if father.id %}
+           {% if father.person.mother.user.id and father.person.father.user.id %}
+             { id: {{father.id}}, mid: {{father.person.mother.user.id}}, fid: {{father.person.father.user.id}}, pids: [{{mother.id}}], name: "{{father.last_name}} {{father.first_name}}", gender: "male"},
+           {% else %}
+             { id: {{father.id}}, pids: [{{mother.id}}], name: "{{father.last_name}} {{father.first_name}}", gender: "male"},
+          {% endif %}
+    {% endif %}
 
-    {% if father.person.mother.user.id and father.person.father.user.id %}
-       { id: {{father.id}}, mid: {{father.person.mother.user.id}}, fid: {{father.person.father.user.id}}, pids: [{{mother.id}}], name: "{{father.last_name}} {{father.first_name}}", gender: "male"},
-    {% else %}
-       { id: {{father.id}}, pids: [{{mother.id}}], name: "{{father.last_name}} {{father.first_name}}", gender: "male"},
+    {% if mother.id %}
+        {% if mother.person.mother.user.id and mother.person.father.user.id %}
+        { id: {{mother.id}}, mid: {{mother.person.mother.user.id}}, fid: {{mother.person.father.user.id}}, pids: [{{father.id}}], name: "{{mother.last_name}} {{mother.first_name}}", gender: "female" },
+        {% else %}
+        { id: {{mother.id}}, pids: [{{father.id}}], name: "{{mother.last_name}} {{mother.first_name}}", gender: "female" },
+        {% endif %}
     {% endif %}
+
     
-    {% if mother.person.mother.user.id and mother.person.father.user.id %}
-       { id: {{mother.id}}, mid: {{mother.person.mother.user.id}}, fid: {{mother.person.father.user.id}}, pids: [{{father.id}}], name: "{{mother.last_name}} {{mother.first_name}}", gender: "female" },
-    {% else %}
-       { id: {{mother.id}}, pids: [{{father.id}}], name: "{{mother.last_name}} {{mother.first_name}}", gender: "female" },
-    {% endif %}
-   
+         
     //personne connectée et son partenaire
-    
+       //on dispose des informations sur les deux parents
        {% if mother.id and father.id %}
+          //on a info sur le partenaire
           {% if partner.id %}
-            { id: {{person.user.id}}, mid: {{mother.id}}, pids: [{{partner.id}}], fid: {{father.id}}, pids: [{{partner.id}}], name: "{{person.user.last_name}} {{person.user.first_name}}", gender: "{{person.gender}}" },
+            { id: {{person.user.id}} ,mid: {{mother.id}}, pids: [{{partner.id}}], fid: {{father.id}}, name: "{{person.user.last_name}} {{person.user.first_name}}", gender: "{{person.gender}}" },
+            //pas d'info sur le partenaire
             {% else %}
-             { id: {{person.user.id}}, mid: {{mother.id}}, pids: [{{partner.id}}], fid: {{father.id}}, name: "{{person.user.last_name}} {{person.user.first_name}}", gender: "{{person.gender}}" },
+             { id: {{person.user.id}}, mid: {{mother.id}}, fid: {{father.id}}, name: "{{person.user.last_name}} {{person.user.first_name}}", gender: "{{person.gender}}" },
+            {% endif %}
+      
+        //on dispose des informations sur la mere uniquement
+        {% elif mother.id %}
+            //on a info sur le partenaire
+            {% if partner.id %}
+                { id: {{person.user.id}}, mid: {{mother.id}}, pids: [{{partner.id}}], fid: '10002', name: "{{person.user.last_name}} {{person.user.first_name}}", gender: "{{person.gender}}" },
+               
+                { id: 10002, pids: [{{mother.id}}], name: "Information non fournie", gender: "male" },
+                { id: {{mother.id}}, pids: [10002], name: "{{mother.last_name}} {{mother.first_name}}", gender: "female" },
+             //pas d'info sur le partenaire
+                {% else %}              
+                { id: {{person.user.id}}, mid: {{mother.id}}, fid: '10002', name: "{{person.user.last_name}} {{person.user.first_name}}", gender: "{{person.gender}}" },
+                { id: 10002, pids: [{{mother.id}}], name: "Information non fournie", gender: "male" },
+                { id: {{mother.id}}, pids: [10002], name: "{{mother.last_name}} {{mother.first_name}}", gender: "female" }, 
             {% endif %}
 
-       {% else %}
-           {% if partner.id %}
-             { id: {{person.user.id}}, pids: [{{partner.id}}], name: "{{person.user.last_name}} {{person.user.first_name}}", gender: "{{person.gender}}" },
-             {% else %}
-             { id: {{person.user.id}}, name: "{{person.user.last_name}} {{person.user.first_name}}", gender: "{{person.gender}}" },
-          {% endif %}
-      {% endif %}
-
-    {% if partner.person.mother.id and partner.person.father.id %}
-                { id: {{partner.id}}, mid: {{partner.person.mother.id}}, fid: {{partner.person.father.id}}, pids: [{{person.user.id}}], name: " {{partner.last_name}} {{partner.first_name}} ", gender: "{{partner.person.gender}}" },
-          {% elif partner.person.mother.id  %}
-                { id: {{partner.id}}, mid: {{partner.person.mother.id}}, fid: '10002', pids: [{{person.user.id}}], name: " {{partner.last_name}} {{partner.first_name}}", gender: "{{partner.person.gender}}" },
-                { id: {{partner.person.mother.id}}, pids:[10002], name: " {{partner.person.mother.last_name}} {{partner.person.mother.first_name}}", gender: "female" },
-                { id: 10002, pids: [{{partner.person.mother.id}}], name: " Information non fournie", gender: "male" },
-          {% elif partner.person.father.id  %}
-                { id: {{partner.id}}, mid: '10001', fid: {{partner.person.father.id}}, pids: [{{person.user.id}}], name: " {{partner.last_name}} {{partner.first_name}}", gender: "{{partner.person.gender}}" },
-                { id: '10001', pids:[{{partner.person.father.id}}], name:" Information non fournie" , gender: "female" },
-                { id: {{partner.person.father.id}}, pids: '10001', name: " {{partner.person.father.last_name}} {{partner.person.father.first_name}}", gender: "male" },
-         {% else %}
-                { id: {{partner.id}}, mid: '10001', fid: '10002', pids: [{{person.user.id}}], name: " {{partner.last_name}} {{partner.first_name}}", gender: "{{partner.person.gender}}" },
-                { id: 10001, pids:[10002], name: " Information non fournie", gender: "female" },
-                { id: 10002, pids: [10001], name: " Information non fournie", gender: "male" },
+        //on dispose des informations sur la pere uniquement
+        {% elif father.id %}
+            //on a info sur le partenaire
+            {% if partner.id %}
+                { id: {{person.user.id}}, mid: '10001', pids: [{{partner.id}}], fid: {{father.id}}, name: "{{person.user.last_name}} {{person.user.first_name}}", gender: "{{person.gender}}" },
+                { id: {{father.id}}, pids: [10001], name: "{{father.last_name}} {{father.first_name}}", gender: "male" },
+                { id: 10001, pids: [{{father.id}}], name: "Information non fournie", gender: "female" },
+            //pas d'info sur le partenaire 
+            {% else %}              
+                { id: {{person.user.id}}, mid: '10001', pids: '[{{partner.id}}]', fid: {{father.id}}, name: "{{person.user.last_name}} {{person.user.first_name}}", gender: "{{person.gender}}" },
+                { id: {{father.id}}, pids: [10001], name: "{{father.last_name}} {{father.first_name}}", gender: "male" }, 
+                { id: 10001, pids: [{{father.id}}], name: "Information non fournie", gender: "female" },
+            {% endif %}
+    
+            //on dispose aucune info sur le pere et la mere       
+     {% else %}
+          //on a info sur le partenaire
+          {% if partner.id %}
+                { id: {{person.user.id}}, mid: '10001', pids:[{{partner.id}}], fid: '10002', name: "{{person.user.last_name}} {{person.user.first_name}}", gender: "{{person.gender}}" },
+                { id: {{partner.id}},  pids: [{{person.user.id}}], name: "{{partner.last_name}} {{partner.first_name}}", gender: "{{partner.person.gender}}" },
+                { id: 10002, pids: [10001], name: "Information non fournie", gender: "male" },
+                { id: 10001, pids: [10002], name: "Information non fournie", gender: "female" },
+            //pas d'info sur le partenaire    
+            {% else %}              
+                { id: {{person.user.id}}, mid: '10001', pids: '[{{partner.id}}]', fid: {{father.id}}, name: "{{person.user.last_name}} {{person.user.first_name}}", gender: "{{person.gender}}" },
+                { id: {{father.id}}, pids: [10001], name: "{{father.last_name}} {{father.first_name}}", gender: "male" }, 
+                { id: 10001, pids: [{{father.id}}], name: "Information non fournie", gender: "female" },
+            {% endif %}
+    {% endif %}
+    
+    //gestion de la presentation des informations sur les parents du partenaire
+    //on a les infos sur les deux parents
+    {% if partner.id %}
+        {% if partner.person.mother.id and partner.person.father.id %}
+                    { id: {{partner.id}}, mid: {{partner.person.mother.id}}, fid: {{partner.person.father.id}}, pids: [{{person.user.id}}], name: " {{partner.last_name}} {{partner.first_name}} ", gender: "{{partner.person.gender}}" },
+            //informations uniquement sur la mere
+            {% elif partner.person.mother.id  %}
+                    { id: {{partner.id}}, mid: {{partner.person.mother.id}}, fid: '10002', pids: [{{person.user.id}}], name: " {{partner.last_name}} {{partner.first_name}}", gender: "{{partner.person.gender}}" },
+                    { id: {{partner.person.mother.id}}, pids:[10002], name: " {{partner.person.mother.last_name}} {{partner.person.mother.first_name}}", gender: "female" },
+                    { id: 10002, pids: [{{partner.person.mother.id}}], name: " Information non fournie", gender: "male" },
+            //informations uniquement sur le pere 
+            {% elif partner.person.father.id  %}
+                    { id: {{partner.id}}, mid: '10001', fid: {{partner.person.father.id}}, pids: [{{person.user.id}}], name: " {{partner.last_name}} {{partner.first_name}}", gender: "{{partner.person.gender}}" },
+                    { id: '10001', pids:[{{partner.person.father.id}}], name:" Information non fournie" , gender: "female" },
+                    { id: {{partner.person.father.id}}, pids: '10001', name: " {{partner.person.father.last_name}} {{partner.person.father.first_name}}", gender: "male" },
+            //informations sur aucun des deux parents 
+            {% else %}
+                    { id: {{partner.id}}, mid: '10001', fid: '10002', pids: [{{person.user.id}}], name: " {{partner.last_name}} {{partner.first_name}}", gender: "{{partner.person.gender}}" },
+                    { id: 10001, pids:[10002], name: " Information non fournie", gender: "female" },
+                    { id: 10002, pids: [10001], name: " Information non fournie", gender: "male" },
+        {% endif %}
      {% endif %}
 
     //manage chidren and their partner
