@@ -137,12 +137,12 @@ def update_profile(request):
                 birth_date=request.POST['birth_date']
 
         p=''       
-        #p= Person.objects.get(id= current_user.id) forbidden
-        #if Person.objects.get(user= request.user):
+        #On verifie que le user est dans la table person
         try:
             p= Person.objects.get(user= request.user)
         except:
             print('Personne non connectée')
+        #le usser est dans la table person
         if p:
             if request.POST['birth_date']:
                 p.birth_date=request.POST['birth_date']
@@ -182,32 +182,61 @@ def update_profile(request):
             
             p.personallyregister=False
 
+            #on met à jour les infos         
+            p.save()
+            
+            #on verifie que son père est enregistré dans la table user
             try:
                 fatherUser=User.objects.filter(first_name=father_first_name, last_name=father_last_name)
             except:
                 print("Le nom du père n'est pas enregistré")
             
+            #Si le père n'est pas enregistré on l'enregistre
             if fatherUser is None:
                 fatherUser=User.objects.create(first_name=father_first_name, last_name=father_last_name, username=father_last_name+'pere')
                 fatherUser.set_password('0000')
                 fatherUser.save()
-
+            #on verifie que sa mère est enregistré dans la table user
             try:
                 motherUser=User.objects.filter(first_name=mother_first_name, last_name=mother_last_name)
             except:
                 print("Le nom de la mère n'est pas enregistré")
-            
+
+            #Si la mère n'est pas enregistré on l'enregistre
             if motherUser is None:
                 motherUser=User.objects.create(first_name=mother_first_name, last_name=mother_last_name, username=mother_last_name+'mere')
                 motherUser.set_password('0000')
-                motherUser.save()
-                     
-            p.save()
+                motherUser.save()          
 
             messages.success(request,'vos informations ont été mises à jour')
             return redirect('index')
+            
+        #le user n'est pas dans la table person
         else:
-         
+            #on verifie que son père est enregistré dans la table user
+            try:
+                fatherUser=User.objects.filter(first_name=father_first_name, last_name=father_last_name)
+            except:
+                print("Le nom du père n'est pas enregistré")
+            
+            #Si le père n'est pas enregistré on l'enregistre
+            if fatherUser is None:
+                fatherUser=User.objects.create(first_name=father_first_name, last_name=father_last_name, username=father_last_name+'pere')
+                fatherUser.set_password('0000')
+                fatherUser.save()
+            #on verifie que sa mère est enregistré dans la table user
+            try:
+                motherUser=User.objects.filter(first_name=mother_first_name, last_name=mother_last_name)
+            except:
+                print("Le nom de la mère n'est pas enregistré")
+
+            #Si la mère n'est pas enregistré on l'enregistre
+            if motherUser is None:
+                motherUser=User.objects.create(first_name=mother_first_name, last_name=mother_last_name, username=mother_last_name+'mere')
+                motherUser.set_password('0000')
+                motherUser.save() 
+
+            #on crèe la personne         
             p= Person.objects.create(
                         user=request.user,                                                         
                         father=fatherUser,

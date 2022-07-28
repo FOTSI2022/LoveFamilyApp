@@ -188,12 +188,7 @@ def nodes(request):
             if pers.father_id == child.user.id or pers.mother_id == child.user.id:
                 children_children.append(pers)
                 family.append(pers)
-    print("--------------------------")
-    print (family)
-    print([i for i in family])
-      
-   
-    print("--------------------------")
+
     context={'person':this_person,
              'brothers':brothers,
              'children': children,
