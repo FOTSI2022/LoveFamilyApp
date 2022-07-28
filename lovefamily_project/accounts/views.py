@@ -143,8 +143,7 @@ def update_profile(request):
             p= Person.objects.get(user= request.user)
         except:
             print('Personne non connectée')
-        if Person.objects.get(user= request.user):
-            p= Person.objects.get(user= request.user)
+        if p:
             if request.POST['birth_date']:
                 p.birth_date=request.POST['birth_date']
 

@@ -8,10 +8,11 @@
     width: 80px; }
 
   #main-footer {
-  position: static;
-  bottom: 0;
+  position: absolute;
+  bottom: 0px;
   width: 100%;
   height:100px;
+  margin-bottom: -1px;
       }
 
   .navbar {
