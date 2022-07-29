@@ -1,2 +1,2 @@
-web: gunicorn bootcamp.wsgi --log-file -
+web: gunicorn LoveFamilyApp.wsgi --log-file -
 

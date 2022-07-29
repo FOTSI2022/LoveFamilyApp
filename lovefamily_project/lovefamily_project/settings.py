@@ -9,9 +9,10 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-
+from . import config
 from pathlib import Path
 import os
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,18 +22,44 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-c4_clj)i7c(s#p8f_f*mu5f$g9ccv#fr^o3lu1f#s7ne25c8sl'
+#SECRET_KEY = 'django-insecure-c4_clj)i7c(s#p8f_f*mu5f$g9ccv#fr^o3lu1f#s7ne25c8sl' #pour le local
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+#DEBUG = True #pour le local
 
+
+
+ALLOWED_HOSTS = []
+
+# Database
+# https://docs.djangoproject.com/en/4.0/ref/settings/#databases
+"""
+#pour le local
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME':'lovefamilydb',
+        'USER':'postgres',
+        'PASSWORD':'FOTSI2022',
+        'HOST':'localhost',
+        'PORT':'5432'
+    }
+}
+"""
+#pour le deploiement
+SECRET_KEY = config('SECRET_KEY')
+DEBUG = config('DEBUG', default=False, cast=bool)
+DATABASES = {
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL')
+    )
+}
 
 
 #pour modifier le mot de pass
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # During development only
 
-ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -82,19 +109,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'lovefamily_project.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME':'lovefamilydb',
-        'USER':'postgres',
-        'PASSWORD':'FOTSI2022',
-        'HOST':'localhost',
-        'PORT':'5432'
-    }
-}
 
 
 # Password validation
@@ -131,6 +146,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
+
+
+
+
 STATIC_URL = '/static/'
 STATICFILES_DIRS=[os.path.join(BASE_DIR, 'lovefamily_project\static')]
 STATIC_ROOT=os.path.join(BASE_DIR, 'static')
@@ -140,3 +159,5 @@ MEDIA_ROOT=os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
