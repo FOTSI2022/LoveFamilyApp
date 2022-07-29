@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-from . import config
+#from . import config
 from pathlib import Path
 import os
 
@@ -22,10 +22,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-#SECRET_KEY = 'django-insecure-c4_clj)i7c(s#p8f_f*mu5f$g9ccv#fr^o3lu1f#s7ne25c8sl' #pour le local
+SECRET_KEY = 'django-insecure-c4_clj)i7c(s#p8f_f*mu5f$g9ccv#fr^o3lu1f#s7ne25c8sl' #pour le local
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = True #pour le local
+DEBUG = True #pour le local
 
 
 
@@ -33,7 +33,7 @@ ALLOWED_HOSTS = []
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-"""
+
 #pour le local
 DATABASES = {
     'default': {
@@ -45,16 +45,19 @@ DATABASES = {
         'PORT':'5432'
     }
 }
-"""
+
 #pour le deploiement
-SECRET_KEY = config('SECRET_KEY')
+"""
+SECRET_KEY = config.SECRET_KEY
+SECRET_KEY = os.environ['SECRET_KEY']
+
 DEBUG = config('DEBUG', default=False, cast=bool)
 DATABASES = {
     'default': dj_database_url.config(
         default=config('DATABASE_URL')
     )
 }
-
+"""
 
 #pour modifier le mot de pass
 if DEBUG:
